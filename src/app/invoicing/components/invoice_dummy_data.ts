@@ -19,14 +19,19 @@ export const invoiceDummyData = {
     ]
 }
 
+// value sent to invoices
 export type T_InvoiceData = {
-    invoices: {
+    id: number;
+    currency: string;
+    date: string;
+    lines: {
+        id: number;
+        description: string;
         currency: string;
-        date: string;
-        lines: {
-            description: string;
-            currency: string;
-            amount: number;
-        }[];
+        amount: number;
     }[];
+}
+
+export type T_InvoicesData = {
+    invoices: T_InvoiceData[];
 }

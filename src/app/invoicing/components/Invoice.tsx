@@ -24,8 +24,8 @@ export type T_Invoice = {
   lineItems: Array<T_InvoiceLineItem>;
 }
 
-export default function Invoice({ invoice, id, onUpdateInvoice }: { invoice: T_Invoice, id: number, onUpdateInvoice: Function }) {
-
+export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { invoice: T_Invoice, id: number, onUpdateInvoiceConversion: Function }) {
+console.log('invoice', invoice);
   const [issueDate, setIssueDate] = useState<Dayjs | null>(invoice.issueDate ? dayjs(invoice.issueDate) : dayjs());
   const [baseCurrency, setBaseCurrency] = useState(invoice.baseCurrency || 'NZD');
   const [lineItems, setLineItems] = useState(invoice.lineItems || []);
@@ -38,7 +38,7 @@ export default function Invoice({ invoice, id, onUpdateInvoice }: { invoice: T_I
     setIssueDate(date);
   };
 
-  const onUpdateLineItem = (lineItem: T_InvoiceLineItem) => {
+  const onUpdateLineItemConversion = (lineItem: T_InvoiceLineItem) => {
     const _lineItems = [...lineItems];
     _lineItems[lineItem.id] = lineItem;
     setLineItems(_lineItems);
@@ -52,10 +52,9 @@ export default function Invoice({ invoice, id, onUpdateInvoice }: { invoice: T_I
       lineItems: lineItems
     };
 
-    onUpdateInvoice(formValue);
-    console.log('Form submitted ', formValue);
+    onUpdateInvoiceConversion(formValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [issueDate, baseCurrency, lineItems]);
+  }, [baseCurrency, lineItems]);
 
 
   return (
@@ -119,7 +118,7 @@ export default function Invoice({ invoice, id, onUpdateInvoice }: { invoice: T_I
                     fontWeight: 'bold'
                   }}
                 >
-                  {600} {/* Replace with the dynamic number */}
+                  {invoice.lineItems.reduce((prev, curr) => prev + curr.amount, 0)}
                 </Typography>
               </Grid>
             </Grid>
@@ -136,7 +135,7 @@ export default function Invoice({ invoice, id, onUpdateInvoice }: { invoice: T_I
               </Grid>
               {lineItems?.map((lineItem, index) => (
                 <Grid item xs={12} key={index}>
-                  <InvoiceLineItem lineItem={lineItem} id={index} onUpdateLineItem={onUpdateLineItem} />
+                  <InvoiceLineItem lineItem={lineItem} id={index} onUpdateLineItemConversion={onUpdateLineItemConversion} />
                 </Grid>
               ))
               }
