@@ -18,7 +18,7 @@ export type T_InvoiceLineItem = {
     amount: number;
 }
 
-export default function InvoiceLineItem({ lineItem, id, updateLineItems }: { lineItem: T_InvoiceLineItem, id: number, updateLineItems: Function }) {
+export default function InvoiceLineItem({ lineItem, id, onUpdateLineItem }: { lineItem: T_InvoiceLineItem, id: number, onUpdateLineItem: Function }) {
 
     //id will be needed when remove is clicked
     const [description, setDesciption] = useState(lineItem.description || '');
@@ -45,7 +45,7 @@ export default function InvoiceLineItem({ lineItem, id, updateLineItems }: { lin
             amount
         };
 
-        updateLineItems(formValue);
+        onUpdateLineItem(formValue);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [description, currency, amount]);
 

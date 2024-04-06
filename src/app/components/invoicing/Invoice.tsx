@@ -24,7 +24,7 @@ export type T_Invoice = {
   lineItems: Array<T_InvoiceLineItem>;
 }
 
-export default function Invoice({ invoice, id }: { invoice: T_Invoice, id: number }) {
+export default function Invoice({ invoice, id, onUpdateInvoice }: { invoice: T_Invoice, id: number, onUpdateInvoice: Function }) {
 
   const [issueDate, setIssueDate] = useState<Dayjs | null>(invoice.issueDate ? dayjs(invoice.issueDate) : dayjs());
   const [baseCurrency, setBaseCurrency] = useState(invoice.baseCurrency || 'NZD');
@@ -38,7 +38,7 @@ export default function Invoice({ invoice, id }: { invoice: T_Invoice, id: numbe
     setIssueDate(date);
   };
 
-  const updateLineItem = (lineItem: T_InvoiceLineItem) => {
+  const onUpdateLineItem = (lineItem: T_InvoiceLineItem) => {
     const _lineItems = [...lineItems];
     _lineItems[lineItem.id] = lineItem;
     setLineItems(_lineItems);
@@ -52,6 +52,7 @@ export default function Invoice({ invoice, id }: { invoice: T_Invoice, id: numbe
       lineItems: lineItems
     };
 
+    onUpdateInvoice(formValue);
     console.log('Form submitted ', formValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [issueDate, baseCurrency, lineItems]);
@@ -135,7 +136,7 @@ export default function Invoice({ invoice, id }: { invoice: T_Invoice, id: numbe
               </Grid>
               {lineItems?.map((lineItem, index) => (
                 <Grid item xs={12} key={index}>
-                  <InvoiceLineItem lineItem={lineItem} id={index} updateLineItems={updateLineItem} />
+                  <InvoiceLineItem lineItem={lineItem} id={index} onUpdateLineItem={onUpdateLineItem} />
                 </Grid>
               ))
               }

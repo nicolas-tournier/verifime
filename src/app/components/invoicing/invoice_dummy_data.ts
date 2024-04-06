@@ -19,7 +19,7 @@ export const invoiceDummyData = {
     ]
 }
 
-export type T_InvoiceDummyData = {
+export type T_InvoiceData = {
     invoices: {
         currency: string;
         date: string;
