@@ -18,7 +18,7 @@ export type T_ConvertedCurrency = {
  */
 export async function fetchCurrency(amount: number, from: string, to: string): Promise<T_ConvertedCurrency> {
     // Cannot be the same as 'from'
-    if (from === to) {
+    if ((from === to) || amount === 0 || isNaN(amount)) {
         return Promise.resolve({
             amount: amount,
             currencyTo: to,

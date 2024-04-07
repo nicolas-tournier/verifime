@@ -55,7 +55,7 @@ export default function InvoiceLineItem({
             setError(true);
         } else {
             setError(false);
-            +amount === 0 ? setAmount(.01) : setAmount(+amount);
+            setAmount(+amount)
         }
     };
 
@@ -87,7 +87,7 @@ export default function InvoiceLineItem({
             }}>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={3}>
-                        <FormControl fullWidth>
+                        <FormControl fullWidth error={isDuplicate}>
                             <TextField
                                 id="outlined-basic"
                                 label="Description"
@@ -117,7 +117,7 @@ export default function InvoiceLineItem({
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={3}>
-                        <FormControl fullWidth>
+                        <FormControl fullWidth error={isDuplicate || error}>
                             <TextField
                                 id="outlined-basic"
                                 label="Amount"
@@ -127,7 +127,7 @@ export default function InvoiceLineItem({
                                 InputProps={{
                                     inputProps: {
                                         step: 1,
-                                        min: 0.01
+                                        min: 0
                                     },
                                 }}
                                 error={error}
@@ -136,7 +136,7 @@ export default function InvoiceLineItem({
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={3}>
-                        <FormControl>
+                        <FormControl error={isDuplicate}>
                             <Button
                                 variant="outlined"
                                 color="error"
@@ -147,7 +147,7 @@ export default function InvoiceLineItem({
                         </FormControl>
                     </Grid>
                 </Grid>
-                {isDuplicate && <FormHelperText>This line item is a duplicate.</FormHelperText>}
+                {isDuplicate && <FormHelperText>Line item must be unique.</FormHelperText>}
             </Box>
         </>
     );
