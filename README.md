@@ -1,6 +1,8 @@
 # Invoice Calculator
 
-This application is an invoice calculator that allows users to convert line items to a base currency and display an invoice total. It also provides a separate report to show totals by invoice after conversion and the totals for the line items by currency in the original denominations.
+This application is an invoice calculator that allows users to convert line item values of any given currency to a base currency and display an invoice total.
+
+A separate report is provided which shows totals by invoice after conversion to the nominated base currency, in addition to totals for the line items grouped by currency type in the original denominations.
 
 Invoices can be imported and exported via copy and paste of JSON according to the following schema:
 
@@ -29,7 +31,7 @@ Invoices can be imported and exported via copy and paste of JSON according to th
 
 ```
 
-## CONVERSION SERVICE
+## Conervsion Service
 
 Conversion is handled by the https://www.frankfurter.app/ service.
 
