@@ -5,7 +5,8 @@ export const invoiceDummyData = {
             "date": "2020-07-07",
             "lines": [
                 { "description": "Intel Core i9", "currency": "USD", "amount": 700 },
-                { "description": "ASUS ROG Strix", "currency": "AUD", "amount": 500 }
+                { "description": "ASUS ROG Strix", "currency": "AUD", "amount": 500 },
+                { "description": "ASUS ROG Strixx", "currency": "AUD", "amount": 5100 }
             ]
         },
         {

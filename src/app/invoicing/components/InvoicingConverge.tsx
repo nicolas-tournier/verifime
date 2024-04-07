@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import Invoice, { T_Invoice } from "./Invoice";
 import {
   Grid,
-  Box
+  Box,
+  Button
 } from "@mui/material";
 import { debounce } from 'lodash';
 import { boxTheme } from "@/constants/themes";
-import { T_InvoicesData } from "./invoice_dummy_data";
+import { T_InvoicesData } from "./invoice-dummy-data";
 import TotalsSummary from "./TotalsSummary";
+import { invoiceInit } from "./init-values";
 
 
 export type T_Invoices = Array<T_Invoice>;
@@ -75,6 +77,17 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
               </Grid>
             </Grid>
           ))}
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                const _invoices = [...updatedInvoices];
+                _invoices.push(invoiceInit[0]);
+                setUpdatedInvoices(_invoices);
+              }}
+            >+ ADD INVOICE</Button>
+          </Grid>
         </Grid>
 
         <Grid item xs={12} sm={3}>

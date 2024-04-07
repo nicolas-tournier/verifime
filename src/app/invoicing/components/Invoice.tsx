@@ -6,7 +6,8 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  SelectChangeEvent
+  SelectChangeEvent,
+  Button
 } from "@mui/material";
 
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -16,6 +17,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import InvoiceLineItem, { T_InvoiceLineItem } from "./InvoiceLineItem";
 import { useEffect, useState } from "react";
 import { invoiceCurrencies } from "@/constants/invoice-currencies";
+import { lineItemInit } from "./init-values";
 
 export type T_Invoice = {
   id: number;
@@ -61,6 +63,18 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
     _lineItems[lineItem.id] = lineItem;
     setLineItems(_lineItems);
   }
+
+  const handleRemoveLineItem = (id: number) => {
+    console.log('remove', id);
+    setLineItems(lineItems.filter((item, index) => index !== id));
+  };
+
+  const handleAddLineItem = () => {
+    setLineItems([...lineItems, {
+      ...lineItemInit,
+      id: lineItems.length
+    }]);
+  };
 
   return (
     <>
@@ -139,11 +153,13 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
                   }}>LINE ITEMS</Typography>
               </Grid>
               {lineItems?.map((lineItem, index) => (
-                <Grid item xs={12} key={index}>
-                  <InvoiceLineItem lineItem={lineItem} id={index} onUpdateLineItemConversion={onUpdateLineItemConversion} />
+                <Grid item xs={12} key={lineItem.id}>
+                  <InvoiceLineItem lineItem={lineItem} id={index} onUpdateLineItemConversion={onUpdateLineItemConversion} onRemoveLineItem={handleRemoveLineItem} />
                 </Grid>
-              ))
-              }
+              ))}
+              <Grid item xs={12}>
+                <Button variant="outlined" color="primary" onClick={handleAddLineItem}>ADD LINE ITEM</Button>
+              </Grid>
             </Grid>
           </Box>
         </LocalizationProvider>

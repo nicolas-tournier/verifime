@@ -5,8 +5,8 @@ import {
 } from "@mui/material";
 
 import { fetchCurrency } from "./api";
-import { invoiceDummyData, T_InvoicesData } from "./components/invoice_dummy_data";
-import dayjs, { Dayjs } from 'dayjs';
+import { invoiceDummyData, T_InvoicesData } from "./components/invoice-dummy-data";
+import { invoiceInit } from "./components/init-values";
 
 // preserve dummy data. remove proto chain.
 const importedInvoices: T_InvoicesData = JSON.parse(JSON.stringify(invoiceDummyData));
@@ -26,17 +26,7 @@ if (importedInvoices.invoices.length > 0) {
     }
   }) as T_Invoices;
 } else {
-  invoices = [
-    {
-      id: 0,
-      baseCurrency: 'NZD',
-      totalAfterConversion: 0,
-      issueDate: dayjs().format('YYYY-MM-DD'),
-      lineItems: [
-        { id: 0, description: "", currency: "AUD", amount: 1 }
-      ]
-    }
-  ] as T_Invoices;
+  invoices = invoiceInit as T_Invoices;
 }
 
 async function onUpdateInvoicingConversions(invoicesToUpdate: T_InvoicesData): Promise<T_Invoices> {

@@ -9,6 +9,7 @@ import {
     InputLabel,
     SelectChangeEvent
 } from "@mui/material";
+import { on } from "events";
 import { useEffect, useState } from "react";
 
 export type T_InvoiceLineItem = {
@@ -18,7 +19,7 @@ export type T_InvoiceLineItem = {
     amount: number;
 }
 
-export default function InvoiceLineItem({ lineItem, id, onUpdateLineItemConversion }: { lineItem: T_InvoiceLineItem, id: number, onUpdateLineItemConversion: Function }) {
+export default function InvoiceLineItem({ lineItem, id, onUpdateLineItemConversion, onRemoveLineItem }: { lineItem: T_InvoiceLineItem, id: number, onUpdateLineItemConversion: Function, onRemoveLineItem: Function }) {
 
     //id will be needed when remove is clicked
 
@@ -26,6 +27,7 @@ export default function InvoiceLineItem({ lineItem, id, onUpdateLineItemConversi
     const [description, setDesciption] = useState(updatedLineItem.description || '');
     const [currency, setCurrency] = useState(updatedLineItem.currency || 'NZD');
     const [amount, setAmount] = useState(updatedLineItem.amount || 0);
+    const [error, setError] = useState(false);
 
     const handleDescriptionChange = (description: string) => {
         setDesciption(description);
@@ -36,8 +38,17 @@ export default function InvoiceLineItem({ lineItem, id, onUpdateLineItemConversi
     };
 
     const handleAmountChange = (amount: string) => {
-        setAmount(+amount);
+        if (!/^(\d+\.?\d{0,2}|\.\d{1,2})$/.test(amount) && amount !== "") {
+            setError(true);
+        } else {
+            setError(false);
+            +amount === 0 ? setAmount(.01) : setAmount(+amount);
+        }
     };
+
+    const onRemove = (id: number) => {
+        onRemoveLineItem(id);
+    }
 
     useEffect(() => {
         const formValue = {
@@ -92,6 +103,15 @@ export default function InvoiceLineItem({ lineItem, id, onUpdateLineItemConversi
                             label="Amount"
                             variant="outlined"
                             value={amount}
+                            type="number"
+                            InputProps={{
+                                inputProps: {
+                                    step: 1,
+                                    min: 0.01
+                                },
+                            }}
+                            error={error}
+                            helperText={error ? 'Only numbers are allowed' : ''}
                             onChange={(event) => { handleAmountChange(event.target.value) }} />
                     </FormControl>
                 </Grid>
@@ -102,6 +122,7 @@ export default function InvoiceLineItem({ lineItem, id, onUpdateLineItemConversi
                             color="error"
                             size="large"
                             sx={{ height: '56px' }}
+                            onClick={() => onRemove(id)}
                         >REMOVE</Button>
                     </FormControl>
                 </Grid>
