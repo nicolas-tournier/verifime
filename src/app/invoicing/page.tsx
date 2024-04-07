@@ -3,7 +3,7 @@ import {
   Grid,
   Box
 } from "@mui/material";
-
+import { z } from 'zod';
 import { fetchCurrency } from "./api";
 import { invoiceDummyData, T_InvoicesData } from "./components/invoice-dummy-data";
 import { invoiceInit } from "./components/init-values";
@@ -12,6 +12,33 @@ import ErrorBoundary from "../ErrorBoundary";
 // preserve dummy data. remove proto chain.
 const importedInvoices: T_InvoicesData = JSON.parse(JSON.stringify(invoiceDummyData));
 // const importedInvoices: T_InvoicesData = { invoices: [] };
+
+// TODO: use this when impementing the pimport/export feature
+// check imported invoices against schema
+const lineSchema = z.object({
+  description: z.string(),
+  currency: z.string(),
+  amount: z.number(),
+});
+
+const invoiceSchema = z.object({
+  currency: z.string(),
+  date: z.string(),
+  lines: z.array(lineSchema),
+});
+
+const invoicesSchema = z.object({
+  invoices: z.array(invoiceSchema),
+});
+
+const result = invoicesSchema.safeParse(importedInvoices);
+
+if (!result.success) {
+  console.error('Zod validation failed ', result.error);
+} else {
+  console.log('Zod validation successful');
+}
+
 
 // if there are invoices in the dummy data, map them to the invoices array
 // note that id's not used for anything but tracking (invoice # will be derived from invoice id for convenience)
