@@ -27,12 +27,18 @@ export type T_Invoice = {
   lineItems: Array<T_InvoiceLineItem>;
 }
 
+export type T_Duplicates = Array<{
+  id: number;
+  duplicate: boolean;
+}>
+
 export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { invoice: T_Invoice, id: number, onUpdateInvoiceConversion: Function }) {
 
   const [updatedInvoice, setUpdatedInvoice] = useState<T_Invoice>(invoice);
   const [issueDate, setIssueDate] = useState<Dayjs | null>(invoice.issueDate ? dayjs(invoice.issueDate) : dayjs());
   const [baseCurrency, setBaseCurrency] = useState(updatedInvoice.baseCurrency || 'NZD');
   const [lineItems, setLineItems] = useState(updatedInvoice.lineItems || []);
+  const [duplicatesStatus, setDuplicatesStatus] = useState<T_Duplicates>([{ id: -1, duplicate: false }]);
 
   useEffect(() => {
     setUpdatedInvoice(invoice);
@@ -58,14 +64,33 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
     setIssueDate(date);
   };
 
+  const checkForDuplicates = () => {
+    const duplicates = lineItems.flatMap((item, index, self) =>
+      self.some((other, otherIndex) =>
+        otherIndex !== index &&
+        other.description === item.description &&
+        other.currency === item.currency &&
+        other.amount === item.amount
+      ) ? [{ id: item.id, duplicate: true }] : []
+    );
+
+    setDuplicatesStatus(duplicates);
+  };
+
+  useEffect(() => {
+    checkForDuplicates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lineItems]);
+
   const onUpdateLineItemConversion = (lineItem: T_InvoiceLineItem) => {
-    const _lineItems = [...lineItems];
-    _lineItems[lineItem.id] = lineItem;
-    setLineItems(_lineItems);
+    setLineItems(prevLineItems => {
+      const updatedLineItems = [...prevLineItems];
+      updatedLineItems[lineItem.id] = lineItem;
+      return updatedLineItems;
+    });
   }
 
   const handleRemoveLineItem = (id: number) => {
-    console.log('remove', id);
     setLineItems(lineItems.filter((item, index) => index !== id));
   };
 
@@ -99,7 +124,7 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
                   />
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={4} sx={{marginRight: '1rem'}}>
+              <Grid item xs={12} sm={4} sx={{ marginRight: '1rem' }}>
                 <FormControl fullWidth>
                   <InputLabel id="base-currency-label-helper">Base Currency</InputLabel>
                   <Select
@@ -154,7 +179,12 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
               </Grid>
               {lineItems?.map((lineItem, index) => (
                 <Grid item xs={12} key={lineItem.id}>
-                  <InvoiceLineItem lineItem={lineItem} id={index} onUpdateLineItemConversion={onUpdateLineItemConversion} onRemoveLineItem={handleRemoveLineItem} />
+                  <InvoiceLineItem
+                    lineItem={lineItem}
+                    id={index}
+                    onUpdateLineItemConversion={onUpdateLineItemConversion}
+                    onRemoveLineItem={handleRemoveLineItem}
+                    isDuplicate={duplicatesStatus.some((status) => status.id === lineItem.id && status.duplicate)} />
                 </Grid>
               ))}
               <Grid item xs={12}>

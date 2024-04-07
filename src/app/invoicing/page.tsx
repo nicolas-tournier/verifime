@@ -39,8 +39,6 @@ if (!result.success) {
   console.log('Zod validation successful');
 }
 
-
-// if there are invoices in the dummy data, map them to the invoices array
 // note that id's not used for anything but tracking (invoice # will be derived from invoice id for convenience)
 let invoices: T_Invoices;
 if (importedInvoices.invoices.length > 0) {
