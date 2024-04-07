@@ -91,7 +91,7 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
           <Box>
             <Grid container spacing={2} sx={{ marginBottom: '2rem' }}>
               <Grid item xs={12} sm={4}>
-                <FormControl>
+                <FormControl fullWidth>
                   <DatePicker
                     label="Invoice Issue Date"
                     value={issueDate}
@@ -99,8 +99,8 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
                   />
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={4}>
-                <FormControl style={{ width: '100%' }}>
+              <Grid item xs={12} sm={4} sx={{marginRight: '1rem'}}>
+                <FormControl fullWidth>
                   <InputLabel id="base-currency-label-helper">Base Currency</InputLabel>
                   <Select
                     labelId="base-currency-label-helper"
@@ -119,7 +119,7 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid item xs={12} sm={3}>
                 <Typography
                   variant="caption"
                   display="block"

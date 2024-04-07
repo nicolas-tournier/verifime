@@ -67,7 +67,7 @@ export default function InvoiceLineItem({ lineItem, id, onUpdateLineItemConversi
         <>
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={3}>
-                    <FormControl>
+                    <FormControl fullWidth>
                         <TextField
                             id="outlined-basic"
                             label="Description"
@@ -97,7 +97,7 @@ export default function InvoiceLineItem({ lineItem, id, onUpdateLineItemConversi
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={3}>
-                    <FormControl>
+                    <FormControl fullWidth>
                         <TextField
                             id="outlined-basic"
                             label="Amount"

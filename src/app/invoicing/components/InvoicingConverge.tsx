@@ -89,7 +89,6 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
             >+ ADD INVOICE</Button>
           </Grid>
         </Grid>
-
         <Grid item xs={12} sm={3}>
           <TotalsSummary invoices={updatedInvoices} />
         </Grid>
