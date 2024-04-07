@@ -76,7 +76,7 @@ export default function InvoiceLineItem({ lineItem, id, onUpdateLineItemConversi
                             value={currency}
                             fullWidth
                             displayEmpty
-                            onChange={throttle(() => handleCurrencyChange, 300)}
+                            onChange={handleCurrencyChange}
                         >
                             {invoiceCurrencies.map((item) => (
                                 <MenuItem key={item.code} value={item.code}>

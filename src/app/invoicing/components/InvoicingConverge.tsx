@@ -7,8 +7,10 @@ import {
   Box
 } from "@mui/material";
 import dayjs, { Dayjs } from 'dayjs';
+import { debounce } from 'lodash';
 import { boxTheme } from "@/constants/themes";
 import { T_InvoicesData } from "./invoice_dummy_data";
+
 
 export type T_Invoices = Array<T_Invoice>;
 
@@ -38,7 +40,6 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
   useEffect(() => {
     const _invoices: T_InvoicesData = {
       invoices: updatedInvoices.map((invoice) => {
-        console.log('totalAfterConversion ', invoice.totalAfterConversion)
         return {
           id: invoice.id,
           currency: invoice.baseCurrency,
@@ -57,7 +58,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
     const serializedInvoices = JSON.parse(JSON.stringify(_invoices));
     onUpdateInvoicingConversions(serializedInvoices)
       .then((newInvoices: T_Invoices) => {
-        // Only update the state if the new invoices are different from the current ones
+        // only update the state if the new invoices are different from the current ones
         if (JSON.stringify(newInvoices) !== JSON.stringify(updatedInvoices)) {
           setUpdatedInvoices(newInvoices);
         }
@@ -68,10 +69,12 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updatedInvoices]);
 
+  const debouncedSetUpdatedInvoices = debounce(setUpdatedInvoices, 300);
+
   const onUpdateInvoiceConversion = (invoice: T_Invoice) => {
     const _invoices = [...updatedInvoices];
     _invoices[invoice.id] = invoice;
-    setUpdatedInvoices(_invoices);
+    debouncedSetUpdatedInvoices(_invoices);
   }
 
   return (

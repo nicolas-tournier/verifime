@@ -123,7 +123,7 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
                     fontWeight: 'bold'
                   }}
                 >
-                  {updatedInvoice.totalAfterConversion}
+                  {updatedInvoice.totalAfterConversion?.toFixed(2)}
                 </Typography>
               </Grid>
             </Grid>
