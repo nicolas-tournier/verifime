@@ -12,6 +12,7 @@ import { boxTheme } from "@/constants/themes";
 import { T_InvoicesData } from "./invoice-dummy-data";
 import TotalsSummary from "./TotalsSummary";
 import { invoiceInit } from "./init-values";
+import ImportExportInvoiceDialogue from "./ImportExportInvoiceDialogue";
 
 
 export type T_Invoices = Array<T_Invoice>;
@@ -73,6 +74,16 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
     debouncedSetUpdatedInvoices(_invoices);
   }
 
+  const [importExportInvoiceDialogueOpen, setImportExportInvoiceDialogueOpen] = useState(false);
+
+  const handleClickOpenImportExportDialogue = () => {
+    setImportExportInvoiceDialogueOpen(true);
+  };
+
+  const onCloseImportExportInvoiceDialogue = () => {
+    setImportExportInvoiceDialogueOpen(false);
+  };
+
   return (
     <main>
       {/* <ProblemChild /> */}
@@ -98,9 +109,23 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
           </Grid>
         </Grid>
         <Grid item xs={12} sm={3}>
+          <Grid container justifyContent="flex-end">
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleClickOpenImportExportDialogue}
+                sx={{
+                  margin: '-2rem 0.5rem 2rem 0'
+                }}>
+                IMPORT/EXPORT
+              </Button>
+            </Grid>
+          </Grid>
           <TotalsSummary invoices={updatedInvoices} />
         </Grid>
       </Grid>
+      <ImportExportInvoiceDialogue onOpenImportExportInvoiceDialogue={importExportInvoiceDialogueOpen} onCloseImportExportInvoiceDialogue={onCloseImportExportInvoiceDialogue}/>
     </main>
   );
 }

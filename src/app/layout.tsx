@@ -6,7 +6,6 @@ import {
   Typography
 } from "@mui/material";
 import { boxTheme } from "@/constants/themes";
-import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: "Supercorp",
