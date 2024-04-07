@@ -8,10 +8,9 @@ import { fetchCurrency } from "./api";
 import { invoiceDummyData, T_InvoicesData } from "./components/invoice_dummy_data";
 import dayjs, { Dayjs } from 'dayjs';
 
-
 // preserve dummy data. remove proto chain.
-// const importedInvoices: T_InvoicesData = JSON.parse(JSON.stringify(invoiceDummyData));
-const importedInvoices: T_InvoicesData = { invoices: [] };
+const importedInvoices: T_InvoicesData = JSON.parse(JSON.stringify(invoiceDummyData));
+// const importedInvoices: T_InvoicesData = { invoices: [] };
 
 // if there are invoices in the dummy data, map them to the invoices array
 // note that id's not used for anything but tracking (invoice # will be derived from invoice id for convenience)
@@ -34,13 +33,12 @@ if (importedInvoices.invoices.length > 0) {
       totalAfterConversion: 0,
       issueDate: dayjs().format('YYYY-MM-DD'),
       lineItems: [
-        { id: 0, description: "", currency: "AUD", amount:1 }
+        { id: 0, description: "", currency: "AUD", amount: 1 }
       ]
     }
   ] as T_Invoices;
 }
 
-// console.log('invoices ', invoices)
 async function onUpdateInvoicingConversions(invoicesToUpdate: T_InvoicesData): Promise<T_Invoices> {
   'use server'
   const promises = invoicesToUpdate.invoices.map(invoice => {
@@ -85,18 +83,8 @@ export default function Invoicing() {
     <main>
       <Box>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={9}>
+          <Grid item xs={12}>
             <InvoicingConverge invoices={invoices} onUpdateInvoicingConversions={onUpdateInvoicingConversions} />
-          </Grid>
-          <Grid item xs={12} md={9}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                {/* Content for the top right cell goes here */}
-              </Grid>
-              <Grid item xs={12}>
-                {/* Content for the bottom right cell goes here */}
-              </Grid>
-            </Grid>
           </Grid>
         </Grid>
       </Box>

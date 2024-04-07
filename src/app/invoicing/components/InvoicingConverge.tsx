@@ -9,6 +9,7 @@ import {
 import { debounce } from 'lodash';
 import { boxTheme } from "@/constants/themes";
 import { T_InvoicesData } from "./invoice_dummy_data";
+import TotalsSummary from "./TotalsSummary";
 
 
 export type T_Invoices = Array<T_Invoice>;
@@ -65,17 +66,21 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
 
   return (
     <main>
-      {updatedInvoices.map((invoice, index) => (
-        <Grid container spacing={2} key={index}>
-          <Grid item p={2} xs={12} sx={boxThemeInvoices}>
-            <Invoice invoice={invoice} id={index} onUpdateInvoiceConversion={onUpdateInvoiceConversion} />
-          </Grid>
+      <Grid container spacing={2}>
+        <Grid item p={2} xs={12} sm={9}>
+          {updatedInvoices.map((invoice, index) => (
+            <Grid container spacing={2} key={index}>
+              <Grid item xs={12} sx={boxThemeInvoices}>
+                <Invoice invoice={invoice} id={index} onUpdateInvoiceConversion={onUpdateInvoiceConversion} />
+              </Grid>
+            </Grid>
+          ))}
         </Grid>
-      ))}
 
-      <Box>
-
-      </Box>
+        <Grid item xs={12} sm={3}>
+          <TotalsSummary invoices={updatedInvoices} />
+        </Grid>
+      </Grid>
     </main>
   );
 }
