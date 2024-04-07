@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Invoice, { T_Invoice } from "./Invoice";
 import {
   Grid,
   Box
 } from "@mui/material";
-import dayjs, { Dayjs } from 'dayjs';
 import { debounce } from 'lodash';
 import { boxTheme } from "@/constants/themes";
 import { T_InvoicesData } from "./invoice_dummy_data";
@@ -22,20 +21,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
     margin: '20px 10px'
   }
 
-  // when invoices value is passed in as []
-  const initInvoices = useMemo(() => [
-    {
-      id: 0,
-      totalAfterConversion: 0,
-      baseCurrency: 'NZD',
-      issueDate: dayjs().format('YYYY-MM-DD'),
-      lineItems: [
-        { id: 0, description: "", currency: "NZD", amount: 0 }
-      ]
-    }
-  ], []);
-
-  const [updatedInvoices, setUpdatedInvoices] = useState<T_Invoices>(invoices || initInvoices);
+  const [updatedInvoices, setUpdatedInvoices] = useState<T_Invoices>(invoices!);
 
   useEffect(() => {
     const _invoices: T_InvoicesData = {

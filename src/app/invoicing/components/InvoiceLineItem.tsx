@@ -10,7 +10,6 @@ import {
     SelectChangeEvent
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { throttle } from 'lodash';
 
 export type T_InvoiceLineItem = {
     id: number;

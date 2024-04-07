@@ -6,16 +6,17 @@ import {
 
 import { fetchCurrency } from "./api";
 import { invoiceDummyData, T_InvoicesData } from "./components/invoice_dummy_data";
+import dayjs, { Dayjs } from 'dayjs';
 
-let invoices: T_Invoices = [];
 
 // preserve dummy data. remove proto chain.
-const importedInvoices: T_InvoicesData = JSON.parse(JSON.stringify(invoiceDummyData));
+// const importedInvoices: T_InvoicesData = JSON.parse(JSON.stringify(invoiceDummyData));
+const importedInvoices: T_InvoicesData = { invoices: [] };
 
 // if there are invoices in the dummy data, map them to the invoices array
 // note that id's not used for anything but tracking (invoice # will be derived from invoice id for convenience)
-
-if (importedInvoices.invoices) {
+let invoices: T_Invoices;
+if (importedInvoices.invoices.length > 0) {
   invoices = importedInvoices.invoices.map((invoice, index) => {
     return {
       id: index,
@@ -24,11 +25,23 @@ if (importedInvoices.invoices) {
       issueDate: invoice.date,
       lineItems: invoice.lines.map((lineItem, lineIndex) => ({ ...lineItem, id: lineIndex }))
     }
-  });
-  console.log('invoices ', invoices);
+  }) as T_Invoices;
+} else {
+  invoices = [
+    {
+      id: 0,
+      baseCurrency: 'NZD',
+      totalAfterConversion: 0,
+      issueDate: dayjs().format('YYYY-MM-DD'),
+      lineItems: [
+        { id: 0, description: "", currency: "AUD", amount:1 }
+      ]
+    }
+  ] as T_Invoices;
 }
 
-async function onUpdateInvoicingConversions(invoicesToUpdate: T_InvoicesData): Promise<T_Invoices>{
+// console.log('invoices ', invoices)
+async function onUpdateInvoicingConversions(invoicesToUpdate: T_InvoicesData): Promise<T_Invoices> {
   'use server'
   const promises = invoicesToUpdate.invoices.map(invoice => {
     const linePromises = invoice.lines.map(line => {
@@ -62,6 +75,7 @@ async function onUpdateInvoicingConversions(invoicesToUpdate: T_InvoicesData): P
       console.error(error);
       return [] as T_Invoices;
     });
+
 
   return updatedInvoices;
 }
