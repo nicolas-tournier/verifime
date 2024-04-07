@@ -83,7 +83,7 @@ export default function TotalsSummary({ invoices }: { invoices?: T_Invoices }) {
                                 <Typography
                                     sx={{
                                         fontSize: 14,
-                                        fontWeight: 'bold',
+                                        fontWeight: 'semibold',
                                         marginBottom: '1rem',
                                     }}>{currencyNames[currency]}</Typography>
                                 <Typography
@@ -91,7 +91,7 @@ export default function TotalsSummary({ invoices }: { invoices?: T_Invoices }) {
                                         fontSize: 14,
                                         fontWeight: 'bold',
                                         marginBottom: '1rem',
-                                    }}>{total.toFixed(2)}</Typography>
+                                    }}>{!isNaN(total) ? total.toFixed(2) : ''}</Typography>
                             </Grid>
                         ))}
                     </Grid>
@@ -113,7 +113,7 @@ export default function TotalsSummary({ invoices }: { invoices?: T_Invoices }) {
                                 <Typography
                                     sx={{
                                         fontSize: 14,
-                                        fontWeight: 'bold',
+                                        fontWeight: 'semibold',
                                         marginBottom: '1rem',
                                     }}>{currencyNames[currency]}</Typography>
                                 <Typography
@@ -121,7 +121,7 @@ export default function TotalsSummary({ invoices }: { invoices?: T_Invoices }) {
                                         fontSize: 14,
                                         fontWeight: 'bold',
                                         marginBottom: '1rem',
-                                    }}>{total.toFixed(2)}</Typography>
+                                    }}>{!isNaN(total) ? total.toFixed(2) : ''}</Typography>
                             </Grid>
                         ))}
                     </Grid>
