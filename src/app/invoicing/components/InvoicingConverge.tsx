@@ -16,6 +16,11 @@ import { invoiceInit } from "./init-values";
 
 export type T_Invoices = Array<T_Invoice>;
 
+// const ProblemChild = () => {
+//   throw new Error('Error thrown from problem child');
+//   return <div>Error</div>;
+// };
+
 export default function InvoicingConverge({ invoices, onUpdateInvoicingConversions }: { invoices?: T_Invoices, onUpdateInvoicingConversions: Function }) {
 
   const boxThemeInvoices = {
@@ -54,6 +59,8 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
       })
       .catch((error: any) => {
         console.error(error);
+        throw new Error('Error updating invoice convergence');
+        // wont show up in peoduction.
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updatedInvoices]);
@@ -68,6 +75,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
 
   return (
     <main>
+      {/* <ProblemChild /> */}
       <Grid container spacing={2}>
         <Grid item p={2} xs={12} sm={9}>
           {updatedInvoices.map((invoice, index) => (

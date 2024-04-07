@@ -7,6 +7,7 @@ import {
 import { fetchCurrency } from "./api";
 import { invoiceDummyData, T_InvoicesData } from "./components/invoice-dummy-data";
 import { invoiceInit } from "./components/init-values";
+import ErrorBoundary from "../ErrorBoundary";
 
 // preserve dummy data. remove proto chain.
 const importedInvoices: T_InvoicesData = JSON.parse(JSON.stringify(invoiceDummyData));
@@ -60,8 +61,8 @@ async function onUpdateInvoicingConversions(invoicesToUpdate: T_InvoicesData): P
       }) as T_Invoices;
     })
     .catch(error => {
-      console.error(error);
-      return [] as T_Invoices;
+      console.error('Error updating invoices ', error);
+      throw new Error('Error updating invoices.');
     });
 
 
@@ -74,7 +75,9 @@ export default function Invoicing() {
       <Box>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <InvoicingConverge invoices={invoices} onUpdateInvoicingConversions={onUpdateInvoicingConversions} />
+            <ErrorBoundary>
+              <InvoicingConverge invoices={invoices} onUpdateInvoicingConversions={onUpdateInvoicingConversions} />
+            </ErrorBoundary>
           </Grid>
         </Grid>
       </Box>
