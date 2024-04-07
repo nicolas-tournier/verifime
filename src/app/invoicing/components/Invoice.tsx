@@ -19,16 +19,34 @@ import { invoiceCurrencies } from "@/constants/invoice-currencies";
 
 export type T_Invoice = {
   id: number;
+  totalAfterConversion: number;
   baseCurrency: string;
   issueDate: string;
   lineItems: Array<T_InvoiceLineItem>;
 }
 
 export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { invoice: T_Invoice, id: number, onUpdateInvoiceConversion: Function }) {
-console.log('invoice', invoice);
+
+  const [updatedInvoice, setUpdatedInvoice] = useState<T_Invoice>(invoice);
   const [issueDate, setIssueDate] = useState<Dayjs | null>(invoice.issueDate ? dayjs(invoice.issueDate) : dayjs());
-  const [baseCurrency, setBaseCurrency] = useState(invoice.baseCurrency || 'NZD');
-  const [lineItems, setLineItems] = useState(invoice.lineItems || []);
+  const [baseCurrency, setBaseCurrency] = useState(updatedInvoice.baseCurrency || 'NZD');
+  const [lineItems, setLineItems] = useState(updatedInvoice.lineItems || []);
+
+  useEffect(() => {
+    setUpdatedInvoice(invoice);
+  }, [invoice]);
+
+  useEffect(() => {
+    const formValue = {
+      id,
+      issueDate,
+      baseCurrency,
+      lineItems: lineItems
+    };
+
+    onUpdateInvoiceConversion(formValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [baseCurrency, lineItems, id]);
 
   const handleBaseCurrencyChange = (event: SelectChangeEvent) => {
     setBaseCurrency(event.target.value as string);
@@ -44,19 +62,6 @@ console.log('invoice', invoice);
     setLineItems(_lineItems);
   }
 
-  useEffect(() => {
-    const formValue = {
-      id,
-      issueDate,
-      baseCurrency,
-      lineItems: lineItems
-    };
-
-    onUpdateInvoiceConversion(formValue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseCurrency, lineItems]);
-
-
   return (
     <>
       <Typography
@@ -65,7 +70,7 @@ console.log('invoice', invoice);
           fontSize: 16,
           fontWeight: 'bold',
           marginBottom: '2rem'
-        }}>INVOICE # {id}</Typography>
+        }}>INVOICE # {updatedInvoice.id + 1}</Typography>
 
       <form>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -118,7 +123,7 @@ console.log('invoice', invoice);
                     fontWeight: 'bold'
                   }}
                 >
-                  {invoice.lineItems.reduce((prev, curr) => prev + curr.amount, 0)}
+                  {updatedInvoice.totalAfterConversion}
                 </Typography>
               </Grid>
             </Grid>

@@ -10,6 +10,7 @@ import {
     SelectChangeEvent
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { throttle } from 'lodash';
 
 export type T_InvoiceLineItem = {
     id: number;
@@ -21,9 +22,11 @@ export type T_InvoiceLineItem = {
 export default function InvoiceLineItem({ lineItem, id, onUpdateLineItemConversion }: { lineItem: T_InvoiceLineItem, id: number, onUpdateLineItemConversion: Function }) {
 
     //id will be needed when remove is clicked
-    const [description, setDesciption] = useState(lineItem.description || '');
-    const [currency, setCurrency] = useState(lineItem.currency || 'NZD');
-    const [amount, setAmount] = useState(lineItem.amount || 0);
+
+    const [updatedLineItem, setUpdatedLineItem] = useState<T_InvoiceLineItem>(lineItem);
+    const [description, setDesciption] = useState(updatedLineItem.description || '');
+    const [currency, setCurrency] = useState(updatedLineItem.currency || 'NZD');
+    const [amount, setAmount] = useState(updatedLineItem.amount || 0);
 
     const handleDescriptionChange = (description: string) => {
         setDesciption(description);
@@ -45,9 +48,10 @@ export default function InvoiceLineItem({ lineItem, id, onUpdateLineItemConversi
             amount
         };
 
+        setUpdatedLineItem(formValue);
         onUpdateLineItemConversion(formValue);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currency, amount]);
+    }, [currency, amount, id]); // this doesn't capture changes to description, as saving the invoice would be a separate API call
 
     return (
         <>
@@ -72,7 +76,7 @@ export default function InvoiceLineItem({ lineItem, id, onUpdateLineItemConversi
                             value={currency}
                             fullWidth
                             displayEmpty
-                            onChange={handleCurrencyChange}
+                            onChange={throttle(() => handleCurrencyChange, 300)}
                         >
                             {invoiceCurrencies.map((item) => (
                                 <MenuItem key={item.code} value={item.code}>
