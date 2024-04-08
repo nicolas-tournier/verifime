@@ -91,7 +91,7 @@ export default function TotalsSummary({ invoices }: { invoices?: T_Invoices }) {
                                         fontSize: 14,
                                         fontWeight: 'bold',
                                         marginBottom: '1rem',
-                                    }}>{!isNaN(total) ? total.toFixed(2) : ''}</Typography>
+                                    }}>{!isNaN(total) ? (Math.round(total * 100) / 100).toFixed(2) : ''}</Typography>
                             </Grid>
                         ))}
                     </Grid>
@@ -121,7 +121,7 @@ export default function TotalsSummary({ invoices }: { invoices?: T_Invoices }) {
                                         fontSize: 14,
                                         fontWeight: 'bold',
                                         marginBottom: '1rem',
-                                    }}>{!isNaN(total) ? total.toFixed(2) : ''}</Typography>
+                                    }}>{!isNaN(total) ? (Math.round(total * 100) / 100).toFixed(2) : ''}</Typography>
                             </Grid>
                         ))}
                     </Grid>

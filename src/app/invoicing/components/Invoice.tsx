@@ -162,7 +162,7 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
                     fontWeight: 'bold'
                   }}
                 >
-                  {updatedInvoice.totalAfterConversion?.toFixed(2)}
+                  {updatedInvoice.totalAfterConversion ? (Math.round(updatedInvoice.totalAfterConversion * 100) / 100).toFixed(2) : ''}
                 </Typography>
               </Grid>
             </Grid>
