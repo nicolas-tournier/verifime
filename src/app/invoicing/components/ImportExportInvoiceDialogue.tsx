@@ -11,16 +11,22 @@ import Check from '@mui/icons-material/Check';
 import { useEffect, useState, useCallback } from "react";
 import { z } from 'zod';
 
-export default function ImportExportInvoiceDialogue({ onOpenImportExportInvoiceDialogue, onCloseImportExportInvoiceDialogue }: { onOpenImportExportInvoiceDialogue: boolean, onCloseImportExportInvoiceDialogue: (value: string) => void, }) {
+export default function ImportExportInvoiceDialogue({
+    importExportInvoiceDialogueOpen,
+    onCloseImportExportInvoiceDialogue
+}: {
+    importExportInvoiceDialogueOpen: boolean,
+    onCloseImportExportInvoiceDialogue: (value: string) => void
+}) {
 
     const [dialogueIsOpen, setDialogueIsOpen] = useState(false);
     const [textFieldValue, setTextFieldValue] = useState<string>('');
 
     useEffect(() => {
-        if (onOpenImportExportInvoiceDialogue) {
+        if (importExportInvoiceDialogueOpen) {
             setDialogueIsOpen(true);
         }
-    }, [onOpenImportExportInvoiceDialogue]);
+    }, [importExportInvoiceDialogueOpen]);
 
     const validateInput = useCallback((input: string) => {
 

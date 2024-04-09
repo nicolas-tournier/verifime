@@ -13,7 +13,6 @@ import TotalsSummary from "./TotalsSummary";
 import { invoiceInit } from "./init-values";
 import ImportExportInvoiceDialogue from "./ImportExportInvoiceDialogue";
 
-
 export type T_Invoices = Array<T_Invoice>;
 
 // const ProblemChild = () => {
@@ -78,7 +77,6 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
   };
 
   const onCloseImportExportInvoiceDialogue = (importedInvoicesString: string) => {
-    console.log('importedInvoices', importedInvoicesString);
     const importedInvoicesData: T_InvoicesData = JSON.parse(importedInvoicesString) as T_InvoicesData;
     let _invoices: T_Invoices = [];
     if (importedInvoicesData) {
@@ -95,7 +93,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
       }
       setUpdatedInvoices(_invoices as T_Invoices);
     }
-    setImportExportInvoiceDialogueOpen(false);
+    setImportExportInvoiceDialogueOpen(false); // needed this so that the open triggers subsequently
   };
 
   return (
@@ -139,7 +137,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
           <TotalsSummary invoices={updatedInvoices} />
         </Grid>
       </Grid>
-      <ImportExportInvoiceDialogue onOpenImportExportInvoiceDialogue={importExportInvoiceDialogueOpen} onCloseImportExportInvoiceDialogue={onCloseImportExportInvoiceDialogue} />
+      <ImportExportInvoiceDialogue importExportInvoiceDialogueOpen={importExportInvoiceDialogueOpen} onCloseImportExportInvoiceDialogue={onCloseImportExportInvoiceDialogue} />
     </main>
   );
 }
