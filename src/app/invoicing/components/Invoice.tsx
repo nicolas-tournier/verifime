@@ -13,7 +13,7 @@ import {
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
-
+import { uniqWith } from "lodash";
 import InvoiceLineItem, { T_InvoiceLineItem } from "./InvoiceLineItem";
 import { useEffect, useState } from "react";
 import { invoiceCurrencies } from "@/constants/invoice-currencies";
@@ -49,9 +49,13 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
       id,
       issueDate,
       baseCurrency,
-      lineItems: lineItems
+      lineItems: uniqWith(lineItems, (a, b) => {
+        return a.description === b.description &&
+          a.currency === b.currency &&
+          a.amount === b.amount;
+      })
     };
-
+    console.log('formValue', formValue);
     onUpdateInvoiceConversion(formValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseCurrency, lineItems, id]);
@@ -65,15 +69,15 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
   };
 
   const checkForDuplicates = () => {
-    const duplicates = lineItems.flatMap((item, index, self) =>
+    const duplicates = lineItems.filter((item, index, self) =>
       self.some((other, otherIndex) =>
         otherIndex !== index &&
         other.description === item.description &&
         other.currency === item.currency &&
         other.amount === item.amount
-      ) ? [{ id: item.id, duplicate: true }] : []
-    );
-
+      )
+    ).map(item => ({ id: item.id, duplicate: true }));
+    
     setDuplicatesStatus(duplicates);
   };
 

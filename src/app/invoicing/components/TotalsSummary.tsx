@@ -3,12 +3,7 @@
 import {
     Box,
     Grid,
-    Typography,
-    FormControl,
-    Select,
-    MenuItem,
-    InputLabel,
-    SelectChangeEvent
+    Typography
 } from "@mui/material";
 
 import { boxTheme } from "@/constants/themes";

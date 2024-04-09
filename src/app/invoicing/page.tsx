@@ -13,7 +13,7 @@ import ErrorBoundary from "../ErrorBoundary";
 const importedInvoices: T_InvoicesData = JSON.parse(JSON.stringify(invoiceDummyData));
 // const importedInvoices: T_InvoicesData = { invoices: [] };
 
-// TODO: use this when impementing the pimport/export feature
+// TODO: use this when implementing the import/export feature
 // check imported invoices against schema
 const lineSchema = z.object({
   description: z.string(),
@@ -64,9 +64,8 @@ async function onUpdateInvoicingConversions(invoicesToUpdate: T_InvoicesData): P
           invoiceId: invoice.id,
           lineId: line.id,
           conversion
-        }))
-    }
-    );
+        }));
+    });
     return Promise.all(linePromises);
   });
 

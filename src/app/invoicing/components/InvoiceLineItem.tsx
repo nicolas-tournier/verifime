@@ -33,9 +33,6 @@ export default function InvoiceLineItem({
     onRemoveLineItem: Function,
     isDuplicate: boolean
 }) {
-
-    //id will be needed when remove is clicked
-
     const [updatedLineItem, setUpdatedLineItem] = useState<T_InvoiceLineItem>(lineItem);
     const [description, setDesciption] = useState(updatedLineItem.description || '');
     const [currency, setCurrency] = useState(updatedLineItem.currency || 'NZD');
@@ -71,7 +68,7 @@ export default function InvoiceLineItem({
             amount
         };
 
-        setUpdatedLineItem(formValue);
+        // setUpdatedLineItem(formValue); // this is not needed
         onUpdateLineItemConversion(formValue);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [description, currency, amount, id]);

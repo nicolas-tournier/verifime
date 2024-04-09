@@ -51,6 +51,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
     };
 
     const serializedInvoices = JSON.parse(JSON.stringify(_invoices));
+    
     onUpdateInvoicingConversions(serializedInvoices)
       .then((newInvoices: T_Invoices) => {
         // only update the state if the new invoices are different from the current ones
