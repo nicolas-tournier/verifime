@@ -11,7 +11,8 @@ import {
     FormHelperText,
     Box
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
+import { debounce } from 'lodash';
 
 export type T_InvoiceLineItem = {
     id: number;
@@ -29,7 +30,7 @@ export default function InvoiceLineItem({
 }: {
     lineItem: T_InvoiceLineItem,
     id: number,
-    onUpdateLineItemConversion: Function,
+    onUpdateLineItemConversion: (value: { id: number, description: string, currency: string, amount: number }) => void,
     onRemoveLineItem: Function,
     isDuplicate: boolean
 }) {
@@ -59,6 +60,9 @@ export default function InvoiceLineItem({
     const onRemove = (id: number) => {
         onRemoveLineItem(id);
     }
+    const debouncedSetUpdatedLineItem = useRef(
+        debounce((formValue) => onUpdateLineItemConversion(formValue), 300)
+    ).current;
 
     useEffect(() => {
         const formValue = {
@@ -68,8 +72,7 @@ export default function InvoiceLineItem({
             amount
         };
 
-        // setUpdatedLineItem(formValue); // this is not needed
-        onUpdateLineItemConversion(formValue);
+        debouncedSetUpdatedLineItem(formValue);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [description, currency, amount, id]);
     // this currently captures changes to description

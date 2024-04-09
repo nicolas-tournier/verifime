@@ -55,7 +55,7 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
           a.amount === b.amount;
       })
     };
-    console.log('formValue', formValue);
+
     onUpdateInvoiceConversion(formValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseCurrency, lineItems, id]);

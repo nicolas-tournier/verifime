@@ -7,7 +7,6 @@ import {
   Box,
   Button
 } from "@mui/material";
-import { debounce } from 'lodash';
 import { boxTheme } from "@/constants/themes";
 import { T_InvoicesData } from "./invoice-dummy-data";
 import TotalsSummary from "./TotalsSummary";
@@ -62,27 +61,25 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
       .catch((error: any) => {
         console.error(error);
         throw new Error('Error updating invoice convergence');
-        // wont show up in peoduction.
+        // wont show up in production.
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updatedInvoices]);
 
-  const debouncedSetUpdatedInvoices = debounce(setUpdatedInvoices, 300);
-
   const onUpdateInvoiceConversion = (invoice: T_Invoice) => {
     const _invoices = [...updatedInvoices];
     _invoices[invoice.id] = invoice;
-    debouncedSetUpdatedInvoices(_invoices);
+    setUpdatedInvoices(_invoices);
   }
 
   const [importExportInvoiceDialogueOpen, setImportExportInvoiceDialogueOpen] = useState(false);
 
   const handleClickOpenImportExportDialogue = () => {
-    setImportExportInvoiceDialogueOpen(true);
+    setImportExportInvoiceDialogueOpen(true); // could data be passed here
   };
 
   const onCloseImportExportInvoiceDialogue = () => {
-    setImportExportInvoiceDialogueOpen(false);
+    setImportExportInvoiceDialogueOpen(false); // could data be passed here
   };
 
   return (
