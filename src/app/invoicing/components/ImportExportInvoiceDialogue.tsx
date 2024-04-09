@@ -8,11 +8,13 @@ import {
     TextField
 } from "@mui/material";
 import Check from '@mui/icons-material/Check';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { z } from 'zod';
 
-export default function ImportExportInvoiceDialogue({ onOpenImportExportInvoiceDialogue, onCloseImportExportInvoiceDialogue }: { onOpenImportExportInvoiceDialogue: boolean, onCloseImportExportInvoiceDialogue: Function }) {
+export default function ImportExportInvoiceDialogue({ onOpenImportExportInvoiceDialogue, onCloseImportExportInvoiceDialogue }: { onOpenImportExportInvoiceDialogue: boolean, onCloseImportExportInvoiceDialogue: (value: string) => void, }) {
 
     const [dialogueIsOpen, setDialogueIsOpen] = useState(false);
+    const [textFieldValue, setTextFieldValue] = useState<string>('');
 
     useEffect(() => {
         if (onOpenImportExportInvoiceDialogue) {
@@ -20,15 +22,54 @@ export default function ImportExportInvoiceDialogue({ onOpenImportExportInvoiceD
         }
     }, [onOpenImportExportInvoiceDialogue]);
 
+    const validateInput = useCallback((input: string) => {
+
+        let parsedInput;
+        try {
+            parsedInput = JSON.parse(input);
+        } catch (error) {
+            console.error('Failed to parse JSON', error);
+            throw new Error('Invalid JSON');
+        }
+
+        const lineSchema = z.object({
+            description: z.string(),
+            currency: z.string(),
+            amount: z.number(),
+        });
+
+        const invoiceSchema = z.object({
+            currency: z.string(),
+            date: z.string(),
+            lines: z.array(lineSchema),
+        });
+
+        const invoicesSchema = z.object({
+            invoices: z.array(invoiceSchema),
+        });
+
+        const result = invoicesSchema.safeParse(parsedInput);
+
+        if (!result.success) {
+            console.error('Zod validation failed ', result.error);
+        } else {
+            console.log('Zod validation successful');
+            return true;
+        }
+    }, []);
+
     const handleClose = () => {
         setDialogueIsOpen(false);
-        onCloseImportExportInvoiceDialogue();
+        onCloseImportExportInvoiceDialogue(textFieldValue);
     };
 
     const handleOK = () => {
-        handleClose();
-        //TODO: Implement the import/export logic
-    }
+        if (textFieldValue === '') return;
+
+        if (validateInput(textFieldValue)) {
+            handleClose();
+        }
+    };
 
     return (
         <Dialog open={dialogueIsOpen} fullWidth maxWidth="md">
@@ -46,6 +87,7 @@ export default function ImportExportInvoiceDialogue({ onOpenImportExportInvoiceD
                     fullWidth
                     multiline
                     minRows={10}
+                    onChange={(event) => setTextFieldValue(event.target.value)}
                     sx={{
                         overflow: 'auto'
                     }}

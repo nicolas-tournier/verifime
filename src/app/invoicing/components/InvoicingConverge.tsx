@@ -50,7 +50,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
     };
 
     const serializedInvoices = JSON.parse(JSON.stringify(_invoices));
-    
+
     onUpdateInvoicingConversions(serializedInvoices)
       .then((newInvoices: T_Invoices) => {
         // only update the state if the new invoices are different from the current ones
@@ -59,7 +59,6 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
         }
       })
       .catch((error: any) => {
-        console.error(error);
         throw new Error('Error updating invoice convergence');
         // wont show up in production.
       });
@@ -75,11 +74,28 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
   const [importExportInvoiceDialogueOpen, setImportExportInvoiceDialogueOpen] = useState(false);
 
   const handleClickOpenImportExportDialogue = () => {
-    setImportExportInvoiceDialogueOpen(true); // could data be passed here
+    setImportExportInvoiceDialogueOpen(true);
   };
 
-  const onCloseImportExportInvoiceDialogue = () => {
-    setImportExportInvoiceDialogueOpen(false); // could data be passed here
+  const onCloseImportExportInvoiceDialogue = (importedInvoicesString: string) => {
+    console.log('importedInvoices', importedInvoicesString);
+    const importedInvoicesData: T_InvoicesData = JSON.parse(importedInvoicesString) as T_InvoicesData;
+    let _invoices: T_Invoices = [];
+    if (importedInvoicesData) {
+      if (importedInvoicesData.invoices.length > 0) {
+        _invoices = importedInvoicesData.invoices.map((invoice, index) => {
+          return {
+            id: index,
+            baseCurrency: invoice.currency,
+            totalAfterConversion: 0, // this will be calculated via the conversion API once loaded to invoices
+            issueDate: invoice.date,
+            lineItems: invoice.lines.map((lineItem, lineIndex) => ({ ...lineItem, id: lineIndex }))
+          }
+        }) as T_Invoices;
+      }
+      setUpdatedInvoices(_invoices as T_Invoices);
+    }
+    setImportExportInvoiceDialogueOpen(false);
   };
 
   return (
@@ -123,7 +139,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
           <TotalsSummary invoices={updatedInvoices} />
         </Grid>
       </Grid>
-      <ImportExportInvoiceDialogue onOpenImportExportInvoiceDialogue={importExportInvoiceDialogueOpen} onCloseImportExportInvoiceDialogue={onCloseImportExportInvoiceDialogue}/>
+      <ImportExportInvoiceDialogue onOpenImportExportInvoiceDialogue={importExportInvoiceDialogueOpen} onCloseImportExportInvoiceDialogue={onCloseImportExportInvoiceDialogue} />
     </main>
   );
 }

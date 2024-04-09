@@ -60,6 +60,7 @@ export default function InvoiceLineItem({
     const onRemove = (id: number) => {
         onRemoveLineItem(id);
     }
+    
     const debouncedSetUpdatedLineItem = useRef(
         debounce((formValue) => onUpdateLineItemConversion(formValue), 300)
     ).current;
