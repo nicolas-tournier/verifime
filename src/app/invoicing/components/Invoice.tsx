@@ -13,7 +13,7 @@ import {
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
-import { uniqWith } from "lodash";
+import { uniqWith, isEqual } from "lodash";
 import InvoiceLineItem, { T_InvoiceLineItem } from "./InvoiceLineItem";
 import { useEffect, useState } from "react";
 import { invoiceCurrencies } from "@/constants/invoice-currencies";
@@ -41,7 +41,10 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
   const [duplicatesStatus, setDuplicatesStatus] = useState<T_Duplicates>([{ id: -1, duplicate: false }]);
 
   useEffect(() => {
-    setUpdatedInvoice(invoice);
+    if (!isEqual(invoice, updatedInvoice)) {
+      setUpdatedInvoice(invoice);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invoice]);
 
   useEffect(() => {
@@ -77,7 +80,7 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
         other.amount === item.amount
       )
     ).map(item => ({ id: item.id, duplicate: true }));
-    
+
     setDuplicatesStatus(duplicates);
   };
 

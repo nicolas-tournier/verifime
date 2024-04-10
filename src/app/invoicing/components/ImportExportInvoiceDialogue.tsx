@@ -11,11 +11,16 @@ import Check from '@mui/icons-material/Check';
 import { useEffect, useState, useCallback } from "react";
 import { z } from 'zod';
 
+export type T_Dialogue = {
+    isOpen: boolean;
+    exportData: string;
+}
+
 export default function ImportExportInvoiceDialogue({
     importExportInvoiceDialogueOpen,
     onCloseImportExportInvoiceDialogue
 }: {
-    importExportInvoiceDialogueOpen: boolean,
+    importExportInvoiceDialogueOpen: T_Dialogue,
     onCloseImportExportInvoiceDialogue: (value: string) => void
 }) {
 
@@ -23,7 +28,8 @@ export default function ImportExportInvoiceDialogue({
     const [textFieldValue, setTextFieldValue] = useState<string>('');
 
     useEffect(() => {
-        if (importExportInvoiceDialogueOpen) {
+        if (importExportInvoiceDialogueOpen.isOpen) {
+            setTextFieldValue(importExportInvoiceDialogueOpen.exportData);
             setDialogueIsOpen(true);
         }
     }, [importExportInvoiceDialogueOpen]);
@@ -66,14 +72,13 @@ export default function ImportExportInvoiceDialogue({
 
     const handleClose = () => {
         setDialogueIsOpen(false);
-        onCloseImportExportInvoiceDialogue(textFieldValue);
     };
 
     const handleOK = () => {
         if (textFieldValue === '') return;
-
         if (validateInput(textFieldValue)) {
-            handleClose();
+            setDialogueIsOpen(false);
+            onCloseImportExportInvoiceDialogue(textFieldValue);
         }
     };
 
@@ -94,6 +99,7 @@ export default function ImportExportInvoiceDialogue({
                     multiline
                     minRows={10}
                     onChange={(event) => setTextFieldValue(event.target.value)}
+                    value={textFieldValue}
                     sx={{
                         overflow: 'auto'
                     }}

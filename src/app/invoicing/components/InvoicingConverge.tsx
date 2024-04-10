@@ -4,15 +4,14 @@ import { useEffect, useState } from "react";
 import Invoice, { T_Invoice } from "./Invoice";
 import {
   Grid,
-  Box,
   Button
 } from "@mui/material";
 import { boxTheme } from "@/constants/themes";
 import { T_InvoicesData } from "./invoice-dummy-data";
 import TotalsSummary from "./TotalsSummary";
 import { invoiceInit } from "./init-values";
-import ImportExportInvoiceDialogue from "./ImportExportInvoiceDialogue";
-import { isEqual } from "lodash";
+import ImportExportInvoiceDialogue, { T_Dialogue } from "./ImportExportInvoiceDialogue";
+import { isEqual } from 'lodash';
 
 export type T_Invoices = Array<T_Invoice>;
 
@@ -48,7 +47,6 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
         }
       })
     };
-
     const serializedInvoices = JSON.parse(JSON.stringify(_invoices));
 
     onUpdateInvoicingConversions(serializedInvoices)
@@ -71,14 +69,22 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
     setUpdatedInvoices(_invoices);
   }
 
-  const [importExportInvoiceDialogueOpen, setImportExportInvoiceDialogueOpen] = useState(false);
+  const [importExportInvoiceDialogueOpen, setImportExportInvoiceDialogueOpen] = useState<T_Dialogue>({ isOpen: false, exportData: '' });
 
   const handleClickOpenImportExportDialogue = () => {
-    setImportExportInvoiceDialogueOpen(true);
+    setImportExportInvoiceDialogueOpen({ isOpen: true, exportData: JSON.stringify({ invoices: updatedInvoices }) });
   };
 
   const onCloseImportExportInvoiceDialogue = (importedInvoicesString: string) => {
+
+    setImportExportInvoiceDialogueOpen({ isOpen: false, exportData: '' }); // needed this so that the open triggers subsequently
+
+    if (!importedInvoicesString) {
+      return;
+    }
+
     const importedInvoicesData: T_InvoicesData = JSON.parse(importedInvoicesString) as T_InvoicesData;
+
     let _invoices: T_Invoices = [];
     if (importedInvoicesData) {
       if (importedInvoicesData.invoices.length > 0) {
@@ -92,9 +98,9 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
           }
         }) as T_Invoices;
       }
+
       setUpdatedInvoices(_invoices as T_Invoices);
     }
-    setImportExportInvoiceDialogueOpen(false); // needed this so that the open triggers subsequently
   };
 
   return (
