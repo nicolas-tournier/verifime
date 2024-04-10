@@ -24,13 +24,13 @@ export type T_InvoiceLineItem = {
 export default function InvoiceLineItem({
     lineItem,
     id,
-    onUpdateLineItemConversion,
+    onUpdateLineItem,
     onRemoveLineItem,
     isDuplicate
 }: {
     lineItem: T_InvoiceLineItem,
     id: number,
-    onUpdateLineItemConversion: (value: { id: number, description: string, currency: string, amount: number }) => void,
+    onUpdateLineItem: (value: { id: number, description: string, currency: string, amount: number }) => void,
     onRemoveLineItem: Function,
     isDuplicate: boolean
 }) {
@@ -61,7 +61,7 @@ export default function InvoiceLineItem({
         onRemoveLineItem(id);
     }
     const debouncedSetUpdatedLineItem = useRef(
-        debounce((formValue) => onUpdateLineItemConversion(formValue), 300)
+        debounce((formValue) => onUpdateLineItem(formValue), 300)
     ).current;
 
     useEffect(() => {

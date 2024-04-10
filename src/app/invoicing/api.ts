@@ -3,11 +3,10 @@
 const host = 'api.frankfurter.app';
 
 export type T_ConvertedCurrency = {
-    amount: number;
-    currencyTo: string;
-    currencyFrom: string;
+    base: string;
+    date: string;
+    rates: Record<string, number>;
 }
-
 /**
  * Fetches the amount of one currency when converted from another.
  *
@@ -16,15 +15,7 @@ export type T_ConvertedCurrency = {
  * @param to - The currency to convert to.
  * @returns A Promise that resolves to a string representing the conversion result.
  */
-export async function fetchCurrency(amount: number, from: string, to: string): Promise<T_ConvertedCurrency> {
-    // Cannot be the same as 'from'
-    if ((from === to) || amount === 0 || isNaN(amount)) {
-        return Promise.resolve({
-            amount: amount,
-            currencyTo: to,
-            currencyFrom: from
-        });
-    }
+export async function fetchCurrencyExchangeRates(date: string, from: string, to: Array<string>): Promise<T_ConvertedCurrency> {
 
     // Set cache headers for 1 hour (3600 seconds)
     const cacheOptions = {
@@ -34,15 +25,18 @@ export async function fetchCurrency(amount: number, from: string, to: string): P
     };
 
     try {
-        const response = await fetch(`https://${host}/latest?amount=${amount}&from=${from}&to=${to}`, cacheOptions);
+        const url = `https://${host}/${date}?from=${from}&to=${to.join(",")}`;
+        console.log('fetching from:', url);
+        const response = await fetch(url, cacheOptions);
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
-        const data = await response.json();
+        const data: T_ConvertedCurrency = await response.json();
+
         return {
-            amount: data.rates[to],
-            currencyTo: to,
-            currencyFrom: from
+            base: data.base,
+            date: data.date,
+            rates: data.rates
         };
     } catch (error) {
         console.error('Error fetching conversions:', error);

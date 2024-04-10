@@ -50,7 +50,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
     };
 
     const serializedInvoices = JSON.parse(JSON.stringify(_invoices));
-    
+
     onUpdateInvoicingConversions(serializedInvoices)
       .then((newInvoices: T_Invoices) => {
         // only update the state if the new invoices are different from the current ones
@@ -69,6 +69,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
   const onUpdateInvoiceConversion = (invoice: T_Invoice) => {
     const _invoices = [...updatedInvoices];
     _invoices[invoice.id] = invoice;
+    console.log('onUpdateInvoiceConversion invoice', _invoices);
     setUpdatedInvoices(_invoices);
   }
 
@@ -123,7 +124,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
           <TotalsSummary invoices={updatedInvoices} />
         </Grid>
       </Grid>
-      <ImportExportInvoiceDialogue onOpenImportExportInvoiceDialogue={importExportInvoiceDialogueOpen} onCloseImportExportInvoiceDialogue={onCloseImportExportInvoiceDialogue}/>
+      <ImportExportInvoiceDialogue onOpenImportExportInvoiceDialogue={importExportInvoiceDialogueOpen} onCloseImportExportInvoiceDialogue={onCloseImportExportInvoiceDialogue} />
     </main>
   );
 }
