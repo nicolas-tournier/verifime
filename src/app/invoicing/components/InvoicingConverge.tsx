@@ -12,6 +12,7 @@ import { T_InvoicesData } from "./invoice-dummy-data";
 import TotalsSummary from "./TotalsSummary";
 import { invoiceInit } from "./init-values";
 import ImportExportInvoiceDialogue from "./ImportExportInvoiceDialogue";
+import { isEqual } from "lodash";
 
 export type T_Invoices = Array<T_Invoice>;
 
@@ -53,7 +54,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
     onUpdateInvoicingConversions(serializedInvoices)
       .then((newInvoices: T_Invoices) => {
         // only update the state if the new invoices are different from the current ones
-        if (JSON.stringify(newInvoices) !== JSON.stringify(updatedInvoices)) {
+        if (!isEqual(newInvoices, updatedInvoices)) {
           setUpdatedInvoices(newInvoices);
         }
       })
