@@ -89,7 +89,7 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lineItems]);
 
-  const onUpdateLineItemConversion = (lineItem: T_InvoiceLineItem) => {
+  const onUpdateLineItem = (lineItem: T_InvoiceLineItem) => {
     setLineItems(prevLineItems => {
       const updatedLineItems = [...prevLineItems];
       updatedLineItems[lineItem.id] = lineItem;
@@ -189,7 +189,7 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
                   <InvoiceLineItem
                     lineItem={lineItem}
                     id={index}
-                    onUpdateLineItemConversion={onUpdateLineItemConversion}
+                    onUpdateLineItem={onUpdateLineItem}
                     onRemoveLineItem={handleRemoveLineItem}
                     isDuplicate={duplicatesStatus.some((status) => status.id === lineItem.id && status.duplicate)} />
                 </Grid>
