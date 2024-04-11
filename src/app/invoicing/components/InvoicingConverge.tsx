@@ -122,7 +122,13 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
         }) as T_Invoices;
       }
 
-      setUpdatedInvoices(_invoices as T_Invoices);
+      // First, clear the previous invoices
+      setUpdatedInvoices([]);
+
+      // Then, after a delay, set the new invoices
+      setTimeout(() => {
+        setUpdatedInvoices(_invoices as T_Invoices);
+      }, 0);
     }
   };
 
