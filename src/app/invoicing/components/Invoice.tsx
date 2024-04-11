@@ -109,7 +109,6 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
   };
 
   const handleRemoveLineItem = (id: number) => {
-    // this has some problems !!!!!!!!
     const newLineItems = updatedInvoice.lineItems.filter((item, index) => index !== id);
     setUpdatedInvoice({ ...updatedInvoice, lineItems: newLineItems });
   };
