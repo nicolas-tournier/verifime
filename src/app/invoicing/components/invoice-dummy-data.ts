@@ -20,6 +20,8 @@ export const invoiceDummyData = {
     ]
 }
 
+const a = { "invoices": [{ "id": 0, "totalAfterConversion": 1150.94, "baseCurrency": "NZD", "issueDate": "2020-07-07", "lineItems": [{ "id": 0, "description": "Intel Core i9", "currency": "USD", "amount": 700 }] }, { "id": 1, "totalAfterConversion": 475.29, "baseCurrency": "EUR", "issueDate": "2020-07-07", "lineItems": [{ "id": 0, "description": "Intel Core i9", "currency": "CAD", "amount": 700 }] }] }
+
 // value sent to invoices
 export type T_InvoiceData = {
     id: number;

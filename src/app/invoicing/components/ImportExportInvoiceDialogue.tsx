@@ -9,19 +9,37 @@ import {
 } from "@mui/material";
 import Check from '@mui/icons-material/Check';
 import { useEffect, useState, useCallback } from "react";
-import { z } from 'zod';
+import { optional, z } from 'zod';
+import { T_InvoicesData } from "./invoice-dummy-data";
 
 export type T_Dialogue = {
     isOpen: boolean;
-    exportData: string;
+    exportData: T_InvoicesData;
 }
+
+const lineSchema = z.object({
+    description: z.string(),
+    currency: z.string(),
+    amount: z.number(),
+});
+
+const invoiceSchema = z.object({
+    id: optional(z.number()),
+    currency: z.string(),
+    date: z.string(),
+    lines: z.array(lineSchema),
+});
+
+const invoicesSchema = z.object({
+    invoices: z.array(invoiceSchema),
+});
 
 export default function ImportExportInvoiceDialogue({
     importExportInvoiceDialogueOpen,
     onCloseImportExportInvoiceDialogue
 }: {
     importExportInvoiceDialogueOpen: T_Dialogue,
-    onCloseImportExportInvoiceDialogue: (value: string) => void
+    onCloseImportExportInvoiceDialogue: (value: T_InvoicesData) => void
 }) {
 
     const [dialogueIsOpen, setDialogueIsOpen] = useState(false);
@@ -29,9 +47,12 @@ export default function ImportExportInvoiceDialogue({
 
     useEffect(() => {
         if (importExportInvoiceDialogueOpen.isOpen) {
-            setTextFieldValue(importExportInvoiceDialogueOpen.exportData);
+            const dataString = JSON.stringify(importExportInvoiceDialogueOpen.exportData);
+            validateInput(dataString);
+            setTextFieldValue(dataString);
             setDialogueIsOpen(true);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [importExportInvoiceDialogueOpen]);
 
     const validateInput = useCallback((input: string) => {
@@ -43,22 +64,6 @@ export default function ImportExportInvoiceDialogue({
             console.error('Failed to parse JSON', error);
             throw new Error('Invalid JSON');
         }
-
-        const lineSchema = z.object({
-            description: z.string(),
-            currency: z.string(),
-            amount: z.number(),
-        });
-
-        const invoiceSchema = z.object({
-            currency: z.string(),
-            date: z.string(),
-            lines: z.array(lineSchema),
-        });
-
-        const invoicesSchema = z.object({
-            invoices: z.array(invoiceSchema),
-        });
 
         const result = invoicesSchema.safeParse(parsedInput);
 
@@ -78,7 +83,7 @@ export default function ImportExportInvoiceDialogue({
         if (textFieldValue === '') return;
         if (validateInput(textFieldValue)) {
             setDialogueIsOpen(false);
-            onCloseImportExportInvoiceDialogue(textFieldValue);
+            onCloseImportExportInvoiceDialogue(JSON.parse(textFieldValue) as T_InvoicesData);
         }
     };
 

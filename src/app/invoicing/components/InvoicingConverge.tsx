@@ -47,6 +47,7 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
         }
       })
     };
+
     const serializedInvoices = JSON.parse(JSON.stringify(_invoices));
 
     onUpdateInvoicingConversions(serializedInvoices)
@@ -69,21 +70,43 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
     setUpdatedInvoices(_invoices);
   }
 
-  const [importExportInvoiceDialogueOpen, setImportExportInvoiceDialogueOpen] = useState<T_Dialogue>({ isOpen: false, exportData: '' });
+  const [importExportInvoiceDialogueOpen, setImportExportInvoiceDialogueOpen] = useState<T_Dialogue>({ isOpen: false, exportData: { invoices: [] } });
 
   const handleClickOpenImportExportDialogue = () => {
-    setImportExportInvoiceDialogueOpen({ isOpen: true, exportData: JSON.stringify({ invoices: updatedInvoices }) });
-  };
+    // this should transform the updatedInvoices to the format that the dialogue expects
+    const dialogueText: T_InvoicesData = {
+      invoices: [
+        ...updatedInvoices.map((invoice) => {
+          return {
+            id: invoice.id,
+            currency: invoice.baseCurrency,
+            date: invoice.issueDate,
+            totalAfterConversion: invoice.totalAfterConversion,
+            lines: invoice.lineItems.map((lineItem) => ({
+              id: lineItem.id,
+              description: lineItem.description,
+              currency: lineItem.currency,
+              amount: lineItem.amount
+            }))
+          }
+        })
+      ]
+    };
 
-  const onCloseImportExportInvoiceDialogue = (importedInvoicesString: string) => {
+    setImportExportInvoiceDialogueOpen({
+      isOpen: true, exportData: dialogueText
+    });
+  }
 
-    setImportExportInvoiceDialogueOpen({ isOpen: false, exportData: '' }); // needed this so that the open triggers subsequently
+  const onCloseImportExportInvoiceDialogue = (importedInvoicesString: T_InvoicesData) => {
+
+    setImportExportInvoiceDialogueOpen({ isOpen: false, exportData: { invoices: [] } }); // needed this so that the open triggers subsequently
 
     if (!importedInvoicesString) {
       return;
     }
 
-    const importedInvoicesData: T_InvoicesData = JSON.parse(importedInvoicesString) as T_InvoicesData;
+    const importedInvoicesData: T_InvoicesData = importedInvoicesString as T_InvoicesData;
 
     let _invoices: T_Invoices = [];
     if (importedInvoicesData) {

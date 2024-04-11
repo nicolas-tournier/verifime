@@ -12,10 +12,10 @@ import {
 
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
-import { uniqWith, isEqual } from "lodash";
+import dayjs from 'dayjs';
+import { isEqual, uniqWith } from "lodash";
 import InvoiceLineItem, { T_InvoiceLineItem } from "./InvoiceLineItem";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { invoiceCurrencies } from "@/constants/invoice-currencies";
 import { lineItemInit } from "./init-values";
 
@@ -35,44 +35,35 @@ export type T_Duplicates = Array<{
 export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { invoice: T_Invoice, id: number, onUpdateInvoiceConversion: Function }) {
 
   const [updatedInvoice, setUpdatedInvoice] = useState<T_Invoice>(invoice);
-  const [issueDate, setIssueDate] = useState<Dayjs | null>(invoice.issueDate ? dayjs(invoice.issueDate) : dayjs());
-  const [baseCurrency, setBaseCurrency] = useState(updatedInvoice.baseCurrency || 'NZD');
-  const [lineItems, setLineItems] = useState(updatedInvoice.lineItems || []);
   const [duplicatesStatus, setDuplicatesStatus] = useState<T_Duplicates>([{ id: -1, duplicate: false }]);
+  const prevInvoiceRef = useRef(updatedInvoice);
 
   useEffect(() => {
-    if (!isEqual(invoice, updatedInvoice)) {
-      setUpdatedInvoice(invoice);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setUpdatedInvoice(invoice);
   }, [invoice]);
 
   useEffect(() => {
-    const formValue = {
-      id,
-      issueDate,
-      baseCurrency,
-      lineItems: uniqWith(lineItems, (a, b) => {
-        return a.description === b.description &&
-          a.currency === b.currency &&
-          a.amount === b.amount;
-      })
-    };
+    if (prevInvoiceRef.current.baseCurrency !== updatedInvoice.baseCurrency ||
+      !isEqual(prevInvoiceRef.current.lineItems, updatedInvoice.lineItems)) {
+      const formValue = {
+        id,
+        issueDate: updatedInvoice.issueDate,
+        baseCurrency: updatedInvoice.baseCurrency,
+        lineItems: uniqWith(updatedInvoice.lineItems, (a, b) => {
+          return a.description === b.description &&
+            a.currency === b.currency &&
+            a.amount === b.amount;
+        })
+      };
 
-    onUpdateInvoiceConversion(formValue);
+      onUpdateInvoiceConversion(formValue);
+    }
+    prevInvoiceRef.current = updatedInvoice;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseCurrency, lineItems, id]);
-
-  const handleBaseCurrencyChange = (event: SelectChangeEvent) => {
-    setBaseCurrency(event.target.value as string);
-  };
-
-  const handleIssueDateChange = (date: dayjs.Dayjs) => {
-    setIssueDate(date);
-  };
+  }, [updatedInvoice]);
 
   const checkForDuplicates = () => {
-    const duplicates = lineItems.filter((item, index, self) =>
+    const duplicates = updatedInvoice.lineItems.filter((item, index, self) =>
       self.some((other, otherIndex) =>
         otherIndex !== index &&
         other.description === item.description &&
@@ -87,25 +78,48 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
   useEffect(() => {
     checkForDuplicates();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lineItems]);
+  }, [updatedInvoice.lineItems]);
 
   const onUpdateLineItem = (lineItem: T_InvoiceLineItem) => {
-    setLineItems(prevLineItems => {
-      const updatedLineItems = [...prevLineItems];
-      updatedLineItems[lineItem.id] = lineItem;
-      return updatedLineItems;
+    setUpdatedInvoice(prevState => {
+      const newLineItems = [...prevState.lineItems];
+      newLineItems[lineItem.id] = lineItem;
+  
+      return {
+        ...prevState,
+        lineItems: newLineItems
+      };
     });
   }
+  
+  const handleBaseCurrencyChange = (event: SelectChangeEvent) => {
+    const invoice = {
+      ...updatedInvoice,
+      baseCurrency: event.target.value
+    }
+    setUpdatedInvoice(invoice);
+  };
+
+  const handleIssueDateChange = (date: dayjs.Dayjs) => {
+    const invoice = {
+      ...updatedInvoice,
+      date
+    }
+    setUpdatedInvoice(invoice);
+  };
 
   const handleRemoveLineItem = (id: number) => {
-    setLineItems(lineItems.filter((item, index) => index !== id));
+    // this has some problems !!!!!!!!
+    const newLineItems = updatedInvoice.lineItems.filter((item, index) => index !== id);
+    setUpdatedInvoice({ ...updatedInvoice, lineItems: newLineItems });
   };
 
   const handleAddLineItem = () => {
-    setLineItems([...lineItems, {
+    const newLineItems = [...updatedInvoice.lineItems, {
       ...lineItemInit,
-      id: lineItems.length
-    }]);
+      id: updatedInvoice.lineItems.length
+    }];
+    setUpdatedInvoice({ ...updatedInvoice, lineItems: newLineItems });
   };
 
   return (
@@ -126,7 +140,7 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
                 <FormControl fullWidth>
                   <DatePicker
                     label="Invoice Issue Date"
-                    value={issueDate}
+                    value={dayjs(updatedInvoice.issueDate)}
                     onAccept={(value) => handleIssueDateChange(value!)}
                   />
                 </FormControl>
@@ -138,7 +152,7 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
                     labelId="base-currency-label-helper"
                     id="base-currency-label"
                     label="Base Currency"
-                    value={baseCurrency}
+                    value={updatedInvoice.baseCurrency}
                     fullWidth
                     displayEmpty
                     onChange={handleBaseCurrencyChange}
@@ -184,7 +198,7 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
                     color: '#3846b6'
                   }}>LINE ITEMS</Typography>
               </Grid>
-              {lineItems?.map((lineItem, index) => (
+              {updatedInvoice.lineItems?.map((lineItem, index) => (
                 <Grid item xs={12} key={lineItem.id}>
                   <InvoiceLineItem
                     lineItem={lineItem}
