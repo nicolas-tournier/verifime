@@ -61,7 +61,9 @@ export default function InvoiceLineItem({
         onRemoveLineItem(id);
     }
     const debouncedSetUpdatedLineItem = useRef(
-        debounce((formValue) => onUpdateLineItem(formValue), 300)
+        debounce((formValue) => {
+            return onUpdateLineItem(formValue)
+        }, 300)
     ).current;
 
     useEffect(() => {
@@ -71,7 +73,7 @@ export default function InvoiceLineItem({
             currency,
             amount
         };
-
+        setUpdatedLineItem(formValue); // not used but may be in future and this is the correct place to update it
         debouncedSetUpdatedLineItem(formValue);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [description, currency, amount, id]);

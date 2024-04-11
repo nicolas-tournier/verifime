@@ -32,7 +32,6 @@ const invoicesSchema = z.object({
 });
 
 const result = invoicesSchema.safeParse(importedInvoices);
-console.log('importedInvoices', result);
 
 if (!result.success) {
   console.error('Zod validation failed ', result.error);
@@ -83,25 +82,18 @@ async function onUpdateInvoicingConversions(invoicesToUpdate: T_InvoicesData): P
   const updatedInvoices: Promise<T_Invoices> = Promise.all(ratesByInvoice)
     .then(response => {
       return invoicesToUpdate.invoices.map((invoice) => {
-        console.log('-------------------------------------')
         const invoiceAfterConversion = {
           id: invoice.id,
           totalAfterConversion: invoice.lines.reduce((acc, line) => {
             const rate = (Math.round(response.find(item => item.invoiceId === invoice.id)!.rates[line.currency] * 10000) / 10000);
-            console.log('currency', line.currency);
-            console.log('line.amount', line.amount);
-            console.log('rate', rate);
-            const converted = rate * line.amount;
-            console.log('converted', converted);
+            const converted = line.amount / rate;
             const accum = acc + converted;
-            console.log('accum', accum);
             return accum;
           }, 0),
           baseCurrency: invoice.currency,
           issueDate: invoice.date,
           lineItems: invoice.lines
         }
-        console.log('invoiceAfterConversion', invoiceAfterConversion);
         return invoiceAfterConversion;
       }) as T_Invoices;
     })

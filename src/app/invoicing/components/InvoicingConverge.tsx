@@ -32,6 +32,11 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
   const [updatedInvoices, setUpdatedInvoices] = useState<T_Invoices>(invoices!);
 
   useEffect(() => {
+    if(!invoices) return;
+    setUpdatedInvoices(invoices);
+  }, [invoices]);
+
+  useEffect(() => {
     const _invoices: T_InvoicesData = {
       invoices: updatedInvoices.map((invoice) => {
         return {
@@ -69,7 +74,6 @@ export default function InvoicingConverge({ invoices, onUpdateInvoicingConversio
   const onUpdateInvoiceConversion = (invoice: T_Invoice) => {
     const _invoices = [...updatedInvoices];
     _invoices[invoice.id] = invoice;
-    console.log('onUpdateInvoiceConversion invoice', _invoices);
     setUpdatedInvoices(_invoices);
   }
 

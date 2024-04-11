@@ -35,19 +35,14 @@ export type T_Duplicates = Array<{
 export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { invoice: T_Invoice, id: number, onUpdateInvoiceConversion: Function }) {
 
   const [updatedInvoice, setUpdatedInvoice] = useState<T_Invoice>(invoice);
-  // const [issueDate, setIssueDate] = useState<Dayjs | null>(invoice.issueDate ? dayjs(invoice.issueDate) : dayjs());
-  // const [baseCurrency, setBaseCurrency] = useState(updatedInvoice.baseCurrency || 'NZD');
-  // const [lineItems, setLineItems] = useState(updatedInvoice.lineItems || []);
   const [duplicatesStatus, setDuplicatesStatus] = useState<T_Duplicates>([{ id: -1, duplicate: false }]);
   const prevInvoiceRef = useRef(updatedInvoice);
 
   useEffect(() => {
-    console.log('invoice!!!!!!!!!!!!', invoice);
     setUpdatedInvoice(invoice);
   }, [invoice]);
 
   useEffect(() => {
-    console.log('updatedInvoice', updatedInvoice);
     if (prevInvoiceRef.current.baseCurrency !== updatedInvoice.baseCurrency ||
       !isEqual(prevInvoiceRef.current.lineItems, updatedInvoice.lineItems)) {
       const formValue = {
@@ -63,26 +58,9 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
 
       onUpdateInvoiceConversion(formValue);
     }
-    console.log('prevInvoiceRef.current', prevInvoiceRef.current);
     prevInvoiceRef.current = updatedInvoice;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updatedInvoice]);
-
-  const handleBaseCurrencyChange = (event: SelectChangeEvent) => {
-    const invoice = {
-      ...updatedInvoice,
-      baseCurrency: event.target.value
-    }
-    setUpdatedInvoice(invoice);
-  };
-
-  const handleIssueDateChange = (date: dayjs.Dayjs) => {
-    const invoice = {
-      ...updatedInvoice,
-      date
-    }
-    setUpdatedInvoice(invoice);
-  };
 
   const checkForDuplicates = () => {
     const duplicates = updatedInvoice.lineItems.filter((item, index, self) =>
@@ -103,19 +81,35 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
   }, [updatedInvoice.lineItems]);
 
   const onUpdateLineItem = (lineItem: T_InvoiceLineItem) => {
-    console.log('updatedInvoice.lineItems ', updatedInvoice.lineItems); // this is always the init state ????
-    const newLineItems = [...updatedInvoice.lineItems];
-    newLineItems[lineItem.id] = lineItem;
-    console.log('newLineItems', newLineItems);
-    const udInv = {
-      ...updatedInvoice,
-      lineItems: newLineItems
-    }
-    console.log('udInv', udInv);
-    setUpdatedInvoice(udInv);
+    setUpdatedInvoice(prevState => {
+      const newLineItems = [...prevState.lineItems];
+      newLineItems[lineItem.id] = lineItem;
+  
+      return {
+        ...prevState,
+        lineItems: newLineItems
+      };
+    });
   }
+  
+  const handleBaseCurrencyChange = (event: SelectChangeEvent) => {
+    const invoice = {
+      ...updatedInvoice,
+      baseCurrency: event.target.value
+    }
+    setUpdatedInvoice(invoice);
+  };
+
+  const handleIssueDateChange = (date: dayjs.Dayjs) => {
+    const invoice = {
+      ...updatedInvoice,
+      date
+    }
+    setUpdatedInvoice(invoice);
+  };
 
   const handleRemoveLineItem = (id: number) => {
+    // this has some problems !!!!!!!!
     const newLineItems = updatedInvoice.lineItems.filter((item, index) => index !== id);
     setUpdatedInvoice({ ...updatedInvoice, lineItems: newLineItems });
   };
