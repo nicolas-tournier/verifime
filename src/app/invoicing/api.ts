@@ -50,18 +50,13 @@ export async function fetchCurrency(amount: number, from: string, to: string): P
     }
 }
 
-'use server';
-
-const host = 'api.frankfurter.app';
-
-export type T_ConvertedCurrency = {
+export type T_Rates = {
     base: string;
     date: string;
     rates: Record<string, number>;
 }
 
 /**
-
 
 Fetches currency exchange rates from a given date for a specific base currency and target currencies.
 
@@ -71,7 +66,7 @@ Fetches currency exchange rates from a given date for a specific base currency a
 @returns A promise that resolves to an object containing the base currency, date, and rates.
 @throws An error if the data fetching fails.
 */
-export async function fetchCurrencyExchangeRates(date: string, from: string, to: Array<string>): Promise<T_ConvertedCurrency> {
+export async function fetchCurrencyExchangeRates(date: string, from: string, to: Array<string>): Promise<T_Rates> {
 
     // Set cache headers for 1 hour (3600 seconds)
     const cacheOptions = {
@@ -82,13 +77,12 @@ export async function fetchCurrencyExchangeRates(date: string, from: string, to:
 
     try {
         const url = `https://${host}/${date}?from=${from}&to=${to.join(",")}`;
-        console.log('fetching from:', url);
         const response = await fetch(url, cacheOptions);
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
-        const data: T_ConvertedCurrency = await response.json();
-
+        const data: T_Rates = await response.json();
+        console.log(data);
         return {
             base: data.base,
             date: data.date,
