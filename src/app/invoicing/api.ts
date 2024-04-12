@@ -82,7 +82,6 @@ export async function fetchCurrencyExchangeRates(date: string, from: string, to:
             throw new Error('Failed to fetch data');
         }
         const data: T_Rates = await response.json();
-        console.log(data);
         return {
             base: data.base,
             date: data.date,
