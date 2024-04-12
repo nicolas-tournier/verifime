@@ -43,9 +43,10 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
   }, [invoice]);
 
   useEffect(() => {
-    if (prevInvoiceRef.current.baseCurrency !== updatedInvoice.baseCurrency ||
+    if ((prevInvoiceRef.current.baseCurrency !== updatedInvoice.baseCurrency ||
+      prevInvoiceRef.current.issueDate !== updatedInvoice.issueDate) ||
       !isEqual(prevInvoiceRef.current.lineItems, updatedInvoice.lineItems)) {
-      const formValue = {
+        const formValue = {
         id,
         issueDate: updatedInvoice.issueDate,
         baseCurrency: updatedInvoice.baseCurrency,
@@ -84,16 +85,16 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
     setUpdatedInvoice(prevState => {
       const newLineItems = [...prevState.lineItems];
       newLineItems[lineItem.id] = lineItem;
-  
-      return {
+      const invoice: T_Invoice = {
         ...prevState,
         lineItems: newLineItems
       };
+      return invoice;
     });
   }
   
   const handleBaseCurrencyChange = (event: SelectChangeEvent) => {
-    const invoice = {
+    const invoice: T_Invoice = {
       ...updatedInvoice,
       baseCurrency: event.target.value
     }
@@ -101,9 +102,10 @@ export default function Invoice({ invoice, id, onUpdateInvoiceConversion }: { in
   };
 
   const handleIssueDateChange = (date: dayjs.Dayjs) => {
+    const _date = date.format('YYYY-MM-DD');
     const invoice = {
       ...updatedInvoice,
-      date
+      issueDate: _date
     }
     setUpdatedInvoice(invoice);
   };
