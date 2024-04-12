@@ -42,7 +42,7 @@ async function onUpdateInvoicingConversions(invoicesToUpdate: T_InvoicesData): P
       }) as T_Invoices;
     })
     .catch(error => {
-      console.error('Error updating invoices ', error);
+      console.error('Error updating invoices', error);
       throw new Error('Error updating invoices.');
     });
 
