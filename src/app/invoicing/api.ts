@@ -7,14 +7,18 @@ export type T_ConvertedCurrency = {
     date: string;
     rates: Record<string, number>;
 }
+
 /**
- * Fetches the amount of one currency when converted from another.
- *
- * @param amount - The amount of currency to convert.
- * @param from - The currency to convert from.
- * @param to - The currency to convert to.
- * @returns A Promise that resolves to a string representing the conversion result.
- */
+
+
+Fetches currency exchange rates from a given date for a specific base currency and target currencies.
+
+@param date - The date for which to fetch the exchange rates.
+@param from - The base currency.
+@param to - An array of target currencies.
+@returns A promise that resolves to an object containing the base currency, date, and rates.
+@throws An error if the data fetching fails.
+*/
 export async function fetchCurrencyExchangeRates(date: string, from: string, to: Array<string>): Promise<T_ConvertedCurrency> {
 
     // Set cache headers for 1 hour (3600 seconds)
